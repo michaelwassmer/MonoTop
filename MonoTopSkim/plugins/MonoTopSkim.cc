@@ -164,7 +164,7 @@ bool MonoTopSkim::filter(edm::Event &iEvent, const edm::EventSetup &iSetup)
     // std::cout << "Puppi MET up: " << met_puppi_up.pt() << std::endl;
     // std::cout << "Puppi MET down: " << met_puppi_down.pt() << std::endl;
 
-    // check if we have sizeable MET in the event and if so, keep the event
+    // check if we have sizeable MET in the event and if so, keep the event (hadronic analysis)
     bool met_criterium = (met_max >= metPtMin_) || (met_puppi_max >= metPtMin_);
 
     // get AK4 jets
@@ -187,10 +187,10 @@ bool MonoTopSkim::filter(edm::Event &iEvent, const edm::EventSetup &iSetup)
     // std::cout << "Number of AK8 jets: " << n_ak8jets << std::endl;
     // std::cout << "Number of AK15 jets: " << n_ak15jets << std::endl;
 
-    // want at least one fat jet for hadronic monotop regions
+    // want at least one fat jet for hadronic monotop regions (hadronic analysis)
     bool jet_criterium = (n_ak8jets >= minJetsAK8_) || (n_ak15jets >= minJetsAK15_);
 
-    // if met criterium and fat jet criterium is fulfilled, keep the event
+    // if met criterium and fat jet criterium is fulfilled, keep the event (hadronic analysis)
     if (met_criterium && jet_criterium) return true;
 
     // get slimmedElectrons
@@ -280,11 +280,14 @@ bool MonoTopSkim::filter(edm::Event &iEvent, const edm::EventSetup &iSetup)
     auto hadr_recoil_max       = std::max(hadr_recoil.pt(), std::max(hadr_recoil_up.pt(), hadr_recoil_down.pt()));
     auto hadr_recoil_puppi_max = std::max(hadr_recoil_puppi.pt(), std::max(hadr_recoil_puppi_up.pt(), hadr_recoil_puppi_down.pt()));
 
-    // check if we have sizeable hadronic recoil in the event
+    // check if we have sizeable hadronic recoil in the event (hadronic analysis)
     bool recoil_criterium = (hadr_recoil_max >= metPtMin_) || (hadr_recoil_puppi_max >= metPtMin_);
 
-    // keep the event if recoil and fatjet criteria are fulfilled
+    // keep the event if recoil and fatjet criteria are fulfilled (hadronic analysis)
     if (recoil_criterium && jet_criterium) return true;
+    
+    // -----------------------------------------------------------------------------------------------------------
+    // Here begins the skimming part for the leptonic analysis
 
     // get slimmedVertices
     // edm::Handle< reco::VertexCollection > hVertices;
