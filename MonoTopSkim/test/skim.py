@@ -130,9 +130,9 @@ if not options.inputFiles:
 
 process = cms.Process("SKIM")
 
-process.SimpleMemoryCheck = cms.Service("SimpleMemoryCheck",
-    ignoreTotal = cms.untracked.int32(999)
-)
+#process.SimpleMemoryCheck = cms.Service("SimpleMemoryCheck",
+#    ignoreTotal = cms.untracked.int32(0)
+#)
 
 process.source = cms.Source(
     "PoolSource",
