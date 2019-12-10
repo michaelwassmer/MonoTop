@@ -60,9 +60,9 @@ class MonoTopSkim : public edm::EDFilter {
     edm::EDGetTokenT< pat::JetCollection >      EDMAK8JetsToken;    // AK8 jets
     edm::EDGetTokenT< std::vector< pat::MET > > EDMMETToken;        // MET
     edm::EDGetTokenT< std::vector< pat::MET > > EDMPuppiMETToken;
-    edm::EDGetTokenT< reco::VertexCollection >  EDMVertexToken;  // vertex
-    edm::EDGetTokenT< double >                  EDMRhoToken;     //  pileup density
-    edm::EDGetTokenT< pat::JetCollection >      EDMAK15JetsToken_;
+    // edm::EDGetTokenT< reco::VertexCollection >  EDMVertexToken;  // vertex
+    // edm::EDGetTokenT< double >                  EDMRhoToken;     //  pileup density
+    edm::EDGetTokenT< pat::JetCollection > EDMAK15JetsToken_;
 
     const int    minJetsAK4_;
     const int    minJetsAK8_;
@@ -98,8 +98,8 @@ MonoTopSkim::MonoTopSkim(const edm::ParameterSet &iConfig) :
     EDMAK8JetsToken{consumes< pat::JetCollection >(iConfig.getParameter< edm::InputTag >("AK8jets"))},
     EDMMETToken{consumes< std::vector< pat::MET > >(iConfig.getParameter< edm::InputTag >("met"))},
     EDMPuppiMETToken{consumes< std::vector< pat::MET > >(iConfig.getParameter< edm::InputTag >("met_puppi"))},
-    EDMVertexToken{consumes< reco::VertexCollection >(iConfig.getParameter< edm::InputTag >("vertices"))},
-    EDMRhoToken{consumes< double >(iConfig.getParameter< edm::InputTag >("rho"))},
+    // EDMVertexToken{consumes< reco::VertexCollection >(iConfig.getParameter< edm::InputTag >("vertices"))},
+    // EDMRhoToken{consumes< double >(iConfig.getParameter< edm::InputTag >("rho"))},
     EDMAK15JetsToken_{consumes< pat::JetCollection >(iConfig.getParameter< edm::InputTag >("AK15jets"))},
     minJetsAK4_{iConfig.getParameter< int >("minJetsAK4")},
     minJetsAK8_{iConfig.getParameter< int >("minJetsAK8")},
@@ -183,21 +183,15 @@ bool MonoTopSkim::filter(edm::Event &iEvent, const edm::EventSetup &iSetup)
     int n_ak8jets  = ak8Jets->size();
     int n_ak15jets = ak15Jets->size();
 
-    // want at least one fat jet for hadronic monotop regions
-    bool jet_criterium = (n_ak8jets > 0) || (n_ak15jets > 0);
-
-    // if met criterium and fat jet criterium is fulfilled, keep the event
-    if (met_criterium && jet_criterium) return true;
-
-    // count ak4 and ak8 jets satisfying pt and eta cuts
-    // n_ak4jets = std::count_if(ak4Jets->begin(),ak4Jets->end(),[&](pat::Jet
-    // jet){return (jet.pt()>=AK4jetPtMin_ && fabs(jet.eta())<=AK4jetEtaMax_);});
-    // n_ak8jets = std::count_if(ak8Jets->begin(),ak8Jets->end(),[&](pat::Jet
-    // jet){return (jet.pt()>=AK8jetPtMin_ && fabs(jet.eta())<=AK8jetEtaMax_);});
-
     // std::cout << "Number of AK4 jets: " << n_ak4jets << std::endl;
     // std::cout << "Number of AK8 jets: " << n_ak8jets << std::endl;
     // std::cout << "Number of AK15 jets: " << n_ak15jets << std::endl;
+
+    // want at least one fat jet for hadronic monotop regions
+    bool jet_criterium = (n_ak8jets >= minJetsAK8_) || (n_ak15jets >= minJetsAK15_);
+
+    // if met criterium and fat jet criterium is fulfilled, keep the event
+    if (met_criterium && jet_criterium) return true;
 
     // get slimmedElectrons
     edm::Handle< pat::ElectronCollection > hElectrons;
@@ -239,12 +233,9 @@ bool MonoTopSkim::filter(edm::Event &iEvent, const edm::EventSetup &iSetup)
             [&](pat::Photon ph) { return (ph.pt() < photonPtMin_ || fabs(ph.eta()) > photonEtaMax_ || !ph.photonID("cutBasedPhotonID-Fall17-94X-V2-loose")); }),
         selectedPhotons.end());
 
-    // std::cout << "Number of selected electrons: " << selectedElectrons.size()
-    // << std::endl;
-    // std::cout << "Number of selected muons: " << selectedMuons.size() <<
-    // std::endl;
-    // std::cout << "Number of selected photons: " << selectedPhotons.size() <<
-    // std::endl;
+    // std::cout << "Number of selected electrons: " << selectedElectrons.size() << std::endl;
+    // std::cout << "Number of selected muons: " << selectedMuons.size() << std::endl;
+    // std::cout << "Number of selected photons: " << selectedPhotons.size() << std::endl;
 
     // calculate approximate hadronic recoil
     auto hadr_recoil      = met;
@@ -284,8 +275,7 @@ bool MonoTopSkim::filter(edm::Event &iEvent, const edm::EventSetup &iSetup)
     }
 
     // std::cout << "Hadronic recoil: " << hadr_recoil.pt() << std::endl;
-    // std::cout << "Puppi Hadronic recoil: " << hadr_recoil_puppi.pt() <<
-    // std::endl;
+    // std::cout << "Puppi Hadronic recoil: " << hadr_recoil_puppi.pt() << std::endl;
 
     auto hadr_recoil_max       = std::max(hadr_recoil.pt(), std::max(hadr_recoil_up.pt(), hadr_recoil_down.pt()));
     auto hadr_recoil_puppi_max = std::max(hadr_recoil_puppi.pt(), std::max(hadr_recoil_puppi_up.pt(), hadr_recoil_puppi_down.pt()));
@@ -297,22 +287,20 @@ bool MonoTopSkim::filter(edm::Event &iEvent, const edm::EventSetup &iSetup)
     if (recoil_criterium && jet_criterium) return true;
 
     // get slimmedVertices
-    edm::Handle< reco::VertexCollection > hVertices;
-    iEvent.getByToken(EDMVertexToken, hVertices);
+    // edm::Handle< reco::VertexCollection > hVertices;
+    // iEvent.getByToken(EDMVertexToken, hVertices);
+    // auto vertex = hVertices->empty() ? reco::Vertex() : hVertices->at(0);
 
     // reset lepton collections
     selectedElectrons = *hElectrons;
     selectedMuons     = *hMuons;
 
-    // for leptonic monotop events, dont use ID criteria because of included
-    // isolation cuts
+    // for leptonic monotop events, dont use electron ID criteria because of included isolation cuts
     selectedElectrons.erase(std::remove_if(selectedElectrons.begin(), selectedElectrons.end(),
                                            [&](pat::Electron ele) { return (ele.pt() < (electronPtMin_ + 10.) || fabs(ele.eta()) > electronEtaMax_); }),
                             selectedElectrons.end());
 
-    auto vertex = hVertices->empty() ? reco::Vertex() : hVertices->at(0);
-
-    // for leptonic monotop events, dont use ID criteria for muons
+    // for leptonic monotop events, dont use ID or Iso criteria for muons
     selectedMuons.erase(std::remove_if(selectedMuons.begin(), selectedMuons.end(),
                                        [&](pat::Muon mu) { return (mu.pt() < (muonPtMin_ + 10.) || fabs(mu.eta()) > muonEtaMax_); }),
                         selectedMuons.end());
@@ -326,38 +314,29 @@ bool MonoTopSkim::filter(edm::Event &iEvent, const edm::EventSetup &iSetup)
     int n_btagged_jets = std::count_if(ak4Jets->begin(), ak4Jets->end(),
                                        [&](pat::Jet jet) { return (CSVHelperSkim::PassesCSV(jet, "DeepJet", CSVHelperSkim::CSVwp::Loose, era)); });
 
+    // std::cout << "Number of loosely btagged jets: " << n_btagged_jets << std::endl;
+
     int n_harder_jets = std::count_if(ak4Jets->begin(), ak4Jets->end(), [&](pat::Jet jet) { return (jet.pt() >= 30.); });
-    // std::cout << "Number of loosely btagged jets: " << n_btagged_jets <<
-    // std::endl;
 
     // leading lepton pts
-    // auto leading_ele    = n_electrons > 0 ? selectedElectrons.at(0).p4() :
-    // math::XYZTLorentzVector(0., 0., 0., 0.);
-    // auto leading_muon   = n_muons > 0 ? selectedMuons.at(0).p4() :
-    // math::XYZTLorentzVector(0., 0., 0., 0.);
-    // auto leading_lepton = leading_ele.pt() > leading_muon.pt() ? leading_ele :
-    // leading_muon;
+    // auto leading_ele    = n_electrons > 0 ? selectedElectrons.at(0).p4() : math::XYZTLorentzVector(0., 0., 0., 0.);
+    // auto leading_muon   = n_muons > 0 ? selectedMuons.at(0).p4() : math::XYZTLorentzVector(0., 0., 0., 0.);
+    // auto leading_lepton = leading_ele.pt() > leading_muon.pt() ? leading_ele : leading_muon;
+
+    // auto cos_dphi_met_lep       = TMath::Cos(fabs(TVector2::Phi_mpi_pi(met.phi() - leading_lepton.phi())));
+    // auto m_W_transv             = TMath::Sqrt(2 * leading_lepton.pt() * met.pt() * (1 - cos_dphi_met_lep));
+    // auto cos_dphi_met_lep_puppi = TMath::Cos(fabs(TVector2::Phi_mpi_pi(met_puppi.phi() - leading_lepton.phi())));
+    // auto m_W_transv_puppi       = TMath::Sqrt(2 * leading_lepton.pt() * met_puppi.pt() * (1 - cos_dphi_met_lep_puppi));
+
     auto leading_jet_pt = n_ak4jets > 0 ? ak4Jets->at(0).pt() : 0.;
 
-    // auto cos_dphi_met_lep       =
-    // TMath::Cos(fabs(TVector2::Phi_mpi_pi(met.phi() - leading_lepton.phi())));
-    // auto m_W_transv             = TMath::Sqrt(2 * leading_lepton.pt() *
-    // met.pt() * (1 - cos_dphi_met_lep));
-    // auto cos_dphi_met_lep_puppi =
-    // TMath::Cos(fabs(TVector2::Phi_mpi_pi(met_puppi.phi() -
-    // leading_lepton.phi())));
-    // auto m_W_transv_puppi       = TMath::Sqrt(2 * leading_lepton.pt() *
-    // met_puppi.pt() * (1 - cos_dphi_met_lep_puppi));
-
-    // criterium which lowers requested MET value for events in the leptonic
-    // channel
+    // criterium which lowers requested MET value for events in the leptonic channel
     bool lepton_jet_met_criterium = (n_leptons >= 1) && (n_ak4jets > 0) && (leading_jet_pt > 50.) && (met_max > 80. || met_puppi_max > 80.);
 
     bool w_criterium     = (n_btagged_jets == 0) && (n_harder_jets < 4);
     bool ttbar_criterium = (n_btagged_jets > 0);
 
-    // select events that either are not vetoed by the requirements on MET and
-    // hadronic recoil or if they satisfy the criteria for the leptonic analysis
+    // select events that either are not vetoed by the requirements on MET and hadronic recoil or if they satisfy the criteria for the leptonic analysis
     if (lepton_jet_met_criterium && w_criterium) return true;
     if (lepton_jet_met_criterium && ttbar_criterium) return true;
 
