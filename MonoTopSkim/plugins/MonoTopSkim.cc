@@ -319,7 +319,7 @@ bool MonoTopSkim::filter(edm::Event &iEvent, const edm::EventSetup &iSetup)
 
     // std::cout << "Number of loosely btagged jets: " << n_btagged_jets << std::endl;
 
-    int n_harder_jets = std::count_if(ak4Jets->begin(), ak4Jets->end(), [&](pat::Jet jet) { return (jet.pt() >= 30.); });
+    int n_harder_jets = std::count_if(ak4Jets->begin(), ak4Jets->end(), [&](pat::Jet jet) { return (jet.pt() >= 35.); });
 
     // leading lepton pts
     // auto leading_ele    = n_electrons > 0 ? selectedElectrons.at(0).p4() : math::XYZTLorentzVector(0., 0., 0., 0.);
