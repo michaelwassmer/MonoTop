@@ -493,15 +493,15 @@ EG_corrections = None
 EG_vid = None
 if "2016" in options.dataEra:
     EG_era = "2016-Legacy"
-    EG_corrections = False
+    EG_corrections = True
     EG_vid = True
 elif "2017" in options.dataEra:
     EG_era = "2017-Nov17ReReco"
-    EG_corrections = False
+    EG_corrections = True
     EG_vid = True
 elif "2018" in options.dataEra:
     EG_era = "2018-Prompt"
-    EG_corrections = False
+    EG_corrections = True
     EG_vid = True
 else:
     raise Exception(
@@ -547,6 +547,8 @@ process.OUT = cms.OutputModule(
             "keep *_*_*_SIM",
             "keep *_*_*_LHE",
             "keep *_*slimmedMET*_*_SKIM",
+            "keep *_slimmedElectrons_*_SKIM",
+            "keep *_slimmedPhotons_*_SKIM",
             "keep patPackedCandidates_puppi__SKIM",
             "keep patPackedCandidates_puppiNoLep__SKIM",
             "keep patJets_AK15PFPuppiComplete__SKIM",
