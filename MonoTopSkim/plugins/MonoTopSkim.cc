@@ -357,7 +357,8 @@ bool MonoTopSkim::filter(edm::Event &iEvent, const edm::EventSetup &iSetup)
     auto leading_jet_pt = n_ak4jets > 0 ? ak4Jets->at(0).pt() : 0.;
 
     // criterium which lowers requested MET value for events in the leptonic channel
-    bool lepton_jet_met_criterium = (n_leptons >= 1) && (n_ak4jets >= minJetsAK4_) && (n_ak4jets <= maxJetsAK4_) && (leading_jet_pt >= 50.) && (met_max >= 95. || met_puppi_max >= 95.);
+    bool lepton_jet_met_criterium =
+        (n_leptons >= 1) && (n_ak4jets >= minJetsAK4_) && (n_ak4jets <= maxJetsAK4_) && (leading_jet_pt >= 50.) && (met_max >= 95. || met_puppi_max >= 95.);
 
     // bool w_criterium     = (n_btagged_jets == 0) && (n_harder_jets <= 3);
     // bool ttbar_criterium = (n_btagged_jets > 0) && (n_harder_jets <= 5);
