@@ -7,7 +7,7 @@ config.General.workArea = "crab_skims"
 config.General.transferLogs = True
 
 config.JobType.pluginName = "Analysis"
-config.JobType.psetName = "/nfs/dust/cms/user/mwassmer/MonoTop/CMSSW_10_2_18/src/MonoTop/MonoTopSkim/test/skim.py"
+config.JobType.psetName = "/nfs/dust/cms/user/mwassmer/MonoTop/Skimming/CMSSW_10_2_18/src/MonoTop/MonoTopSkim/test/skim.py"
 config.JobType.outputFiles = ["Skim.root"]
 # config.JobType.maxJobRuntimeMin = 2800
 config.JobType.maxMemoryMB = 2000
