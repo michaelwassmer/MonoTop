@@ -188,7 +188,7 @@ bool MonoTopSkim::filter(edm::Event &iEvent, const edm::EventSetup &iSetup)
     // std::cout << "Number of AK15 jets: " << n_ak15jets << std::endl;
 
     // want at least one fat jet for hadronic monotop regions (hadronic analysis)
-    bool jet_criterium = (n_ak8jets >= minJetsAK8_) || (n_ak15jets >= minJetsAK15_);
+    bool jet_criterium = ((n_ak8jets >= minJetsAK8_) || (n_ak15jets >= minJetsAK15_)) && (n_ak8jets <= maxJetsAK8_) && (n_ak15jets <= maxJetsAK15_);
 
     // if met criterium and fat jet criterium is fulfilled, keep the event (hadronic analysis)
     if (met_criterium && jet_criterium) return true;
