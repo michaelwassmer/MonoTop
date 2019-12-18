@@ -170,9 +170,11 @@ jetToolbox(
     maxTau=3,  # add Nsubjettiness tau1, tau2, tau3, tau4
     JETCorrPayload="AK8PFPuppi",
     JETCorrLevels = ['L1FastJet', 'L2Relative', 'L3Absolute', 'L2L3Residual'],
+    subJETCorrPayload='AK4PFPuppi',
+    subJETCorrLevels = ['L1FastJet', 'L2Relative', 'L3Absolute', 'L2L3Residual'],
     runOnMC=not options.isData,
     dataTier="miniAOD",
-    Cut="pt > 170. && abs(eta) < 2.5",
+    Cut="pt > 150. && abs(rapidity()) < 2.4",
     GetJetMCFlavour=not options.isData,
     bTagDiscriminators=["None"],
     # GetSubJetMCFlavour=True,
@@ -196,9 +198,11 @@ jetToolbox(
     maxTau=3,  # add Nsubjettiness tau1, tau2, tau3, tau4
     JETCorrPayload="AK8PFPuppi",
     JETCorrLevels = ['L1FastJet', 'L2Relative', 'L3Absolute', 'L2L3Residual'],
+    subJETCorrPayload='AK4PFPuppi',
+    subJETCorrLevels = ['L1FastJet', 'L2Relative', 'L3Absolute', 'L2L3Residual'],
     runOnMC=not options.isData,
     dataTier="miniAOD",
-    Cut="pt > 170. && abs(eta) < 2.5",
+    Cut="pt > 170. && abs(rapidity()) < 2.4",
     GetJetMCFlavour=not options.isData,
     bTagDiscriminators=["None"],
     # GetSubJetMCFlavour=True,
@@ -263,6 +267,8 @@ print (pfDeepBoostedJetTagsMetaDiscrs)
 updateJetCollection(
     process,
     jetSource=cms.InputTag("packedPatJetsAK15PFPuppiSoftDrop"),
+    pvSource=cms.InputTag('offlineSlimmedPrimaryVertices'),
+    svSource=cms.InputTag('slimmedSecondaryVertices'),
     rParam=1.5,
     jetCorrections=("AK8PFPuppi", cms.vstring(["L1FastJet", "L2Relative", "L3Absolute", "L2L3Residual"]), "None"),
     btagDiscriminators=pfMassDecorrelatedDeepBoostedJetTagsProbs
@@ -300,6 +306,8 @@ from RecoBTag.MXNet.Parameters.V02.pfMassDecorrelatedDeepBoostedJetPreprocessPar
 updateJetCollection(
     process,
     jetSource=cms.InputTag("packedPatJetsAK8PFPuppiSoftDrop"),
+    pvSource=cms.InputTag('offlineSlimmedPrimaryVertices'),
+    svSource=cms.InputTag('slimmedSecondaryVertices'),
     rParam=0.8,
     jetCorrections=("AK8PFPuppi", cms.vstring(["L1FastJet", "L2Relative", "L3Absolute", "L2L3Residual"]), "None"),
     btagDiscriminators=pfMassDecorrelatedDeepBoostedJetTagsProbs
