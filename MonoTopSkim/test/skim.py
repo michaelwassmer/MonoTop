@@ -217,6 +217,7 @@ jetToolbox(
     "noOutput",
     updateCollection="slimmedJets",
     JETCorrPayload="AK4PFchs",
+    JETCorrLevels = ['L1FastJet', 'L2Relative', 'L3Absolute', 'L2L3Residual'],
     bTagDiscriminators=[
         "pfDeepFlavourJetTags:probb",
         "pfDeepFlavourJetTags:probbb",
@@ -238,6 +239,7 @@ jetToolbox(
     "noOutput",
     updateCollection="slimmedJetsPuppi",
     JETCorrPayload="AK4PFPuppi",
+    JETCorrLevels = ['L1FastJet', 'L2Relative', 'L3Absolute', 'L2L3Residual'],
     bTagDiscriminators=[
         "pfDeepFlavourJetTags:probb",
         "pfDeepFlavourJetTags:probbb",
