@@ -553,6 +553,7 @@ process.OUT = cms.OutputModule(
             "keep *_*_*_HLT*",
             "keep *_*_*_SIM",
             "keep *_*_*_LHE",
+            "keep *_*_*_DQM",
             "keep *_*slimmedMET*_*_SKIM",
             "keep *_slimmedElectrons_*_SKIM",
             "keep *_slimmedPhotons_*_SKIM",
