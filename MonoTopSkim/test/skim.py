@@ -21,7 +21,7 @@ options.register(
 )
 options.register(
     "globalTag",
-    "102X_upgrade2018_realistic_v18",
+    "102X_upgrade2018_realistic_v20",
     VarParsing.multiplicity.singleton,
     VarParsing.varType.string,
     "global tag",
