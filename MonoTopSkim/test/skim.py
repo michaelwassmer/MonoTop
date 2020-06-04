@@ -40,6 +40,14 @@ options.register(
     VarParsing.varType.string,
     "name and path of the output files (without extension)",
 )
+# this option is just there to make the config work with the shell script workflow, it does nothing
+options.register(
+    "weight",
+    1.0,
+    VarParsing.multiplicity.singleton,
+    VarParsing.varType.float,
+    "not doing anything",
+)
 options.parseArguments()
 
 if options.maxEvents is -1:  # maxEvents is set in VarParsing class by default to -1
