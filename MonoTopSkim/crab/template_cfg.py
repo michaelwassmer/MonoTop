@@ -22,10 +22,10 @@ config.JobType.sendPythonFolder = True
 config.Data.inputDataset = "THEINPUTDATASET"
 config.Data.inputDBS = "global"
 config.Data.splitting = "Automatic"
-config.Data.unitsPerJob = 720
-config.Data.publication = False
+config.Data.unitsPerJob = 600
+config.Data.publication = True
 config.Data.publishDBS = "phys03"
-config.Data.outputDatasetTag = "KIT_Monotop_skims_2016_102X"
+config.Data.outputDatasetTag = "KIT_Monotop_skims_2018_102X"+"APPEND"+"_v2"
 
 config.User.voGroup = "dcms"
 

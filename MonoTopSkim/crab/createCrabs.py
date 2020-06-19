@@ -88,6 +88,10 @@ for row in reader:
             repl("DATAERA", row["run"], out)
             repl("GLOBALTAG", row["globalTag"], out)
             repl("ISDATA", row["isData"], out)
+            if row["isData"].lower()=="true":
+                repl("APPEND","_Run"+row["run"], out)
+            else:
+                repl("APPEND","", out)
             # repl('GENERATORNAME',row['generator'],out)
             # repl('WEIGHT',row['weight'],out)
             # repl('SYSTEMATICVARIATIONS',variations,out)
