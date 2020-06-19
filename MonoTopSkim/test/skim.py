@@ -494,8 +494,8 @@ process.load("RecoMET.METFilters.globalSuperTightHalo2016Filter_cfi")
 process.load("CommonTools.RecoAlgos.HBHENoiseFilterResultProducer_cfi")
 process.load("CommonTools.RecoAlgos.HBHENoiseFilter_cfi")
 process.load("RecoMET.METFilters.EcalDeadCellTriggerPrimitiveFilter_cfi")
-process.load("RecoMET.METFilters.BadPFMuonFilter_cfi")
-process.BadPFMuonFilter.muons = cms.InputTag("slimmedMuons")
+#process.load("RecoMET.METFilters.BadPFMuonFilter_cfi")
+#process.BadPFMuonFilter.muons = cms.InputTag("slimmedMuons")
 #process.load("RecoMET.METFilters.eeBadScFilter_cfi")
 
 ###############################################################
@@ -602,7 +602,7 @@ process.skim *= (
 process.skim *= process.primaryVertexFilter
 process.skim *= process.globalSuperTightHalo2016Filter
 process.skim *= process.EcalDeadCellTriggerPrimitiveFilter
-process.skim *= process.BadPFMuonFilter
+#process.skim *= process.BadPFMuonFilter
 #if options.isData:
 #    process.skim *= process.eeBadScFilter
 process.skim *= process.MonoTopSkim
