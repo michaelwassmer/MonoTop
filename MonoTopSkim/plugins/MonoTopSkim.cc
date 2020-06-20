@@ -144,21 +144,26 @@ bool MonoTopSkim::filter(edm::Event &iEvent, const edm::EventSetup &iSetup)
     iEvent.getByToken(EDMPuppiMETToken, hPuppiMETs);
 
     // get PF and Puppi MET 4-vector also considering combined JES and JER variations
-    auto met          = hMETs->at(0).corP4(pat::MET::Type1);
-    auto met_jes_up   = hMETs->at(0).shiftedP4(pat::MET::JetEnUp, pat::MET::Type1);
-    auto met_jes_down = hMETs->at(0).shiftedP4(pat::MET::JetEnDown, pat::MET::Type1);
-    auto met_jer_up   = hMETs->at(0).shiftedP4(pat::MET::JetResUp, pat::MET::Type1);
-    auto met_jer_down = hMETs->at(0).shiftedP4(pat::MET::JetResDown, pat::MET::Type1);
+    auto met           = hMETs->at(0).corP4(pat::MET::Type1);
+    auto met_jes_up    = hMETs->at(0).shiftedP4(pat::MET::JetEnUp, pat::MET::Type1);
+    auto met_jes_down  = hMETs->at(0).shiftedP4(pat::MET::JetEnDown, pat::MET::Type1);
+    auto met_jer_up    = hMETs->at(0).shiftedP4(pat::MET::JetResUp, pat::MET::Type1);
+    auto met_jer_down  = hMETs->at(0).shiftedP4(pat::MET::JetResDown, pat::MET::Type1);
+    auto met_uncl_up   = hMETs->at(0).shiftedP4(pat::MET::UnclusteredEnUp, pat::MET::Type1);
+    auto met_uncl_down = hMETs->at(0).shiftedP4(pat::MET::UnclusteredEnDown, pat::MET::Type1);
 
-    auto met_puppi          = hPuppiMETs->at(0).corP4(pat::MET::Type1);
-    auto met_puppi_jes_up   = hPuppiMETs->at(0).shiftedP4(pat::MET::JetEnUp, pat::MET::Type1);
-    auto met_puppi_jes_down = hPuppiMETs->at(0).shiftedP4(pat::MET::JetEnDown, pat::MET::Type1);
-    auto met_puppi_jer_up   = hPuppiMETs->at(0).shiftedP4(pat::MET::JetResUp, pat::MET::Type1);
-    auto met_puppi_jer_down = hPuppiMETs->at(0).shiftedP4(pat::MET::JetResDown, pat::MET::Type1);
+    auto met_puppi           = hPuppiMETs->at(0).corP4(pat::MET::Type1);
+    auto met_puppi_jes_up    = hPuppiMETs->at(0).shiftedP4(pat::MET::JetEnUp, pat::MET::Type1);
+    auto met_puppi_jes_down  = hPuppiMETs->at(0).shiftedP4(pat::MET::JetEnDown, pat::MET::Type1);
+    auto met_puppi_jer_up    = hPuppiMETs->at(0).shiftedP4(pat::MET::JetResUp, pat::MET::Type1);
+    auto met_puppi_jer_down  = hPuppiMETs->at(0).shiftedP4(pat::MET::JetResDown, pat::MET::Type1);
+    auto met_puppi_uncl_up   = hPuppiMETs->at(0).shiftedP4(pat::MET::UnclusteredEnUp, pat::MET::Type1);
+    auto met_puppi_uncl_down = hPuppiMETs->at(0).shiftedP4(pat::MET::UnclusteredEnDown, pat::MET::Type1);
 
     // determine the maximum met within the nominal value and the variations
-    auto met_max       = std::max({met.pt(), met_jes_up.pt(), met_jes_down.pt(), met_jer_up.pt(), met_jer_down.pt()});
-    auto met_puppi_max = std::max({met_puppi.pt(), met_puppi_jes_up.pt(), met_puppi_jes_down.pt(), met_puppi_jer_up.pt(), met_puppi_jer_down.pt()});
+    auto met_max       = std::max({met.pt(), met_jes_up.pt(), met_jes_down.pt(), met_jer_up.pt(), met_jer_down.pt(), met_uncl_up.pt(), met_uncl_down.pt()});
+    auto met_puppi_max = std::max({met_puppi.pt(), met_puppi_jes_up.pt(), met_puppi_jes_down.pt(), met_puppi_jer_up.pt(), met_puppi_jer_down.pt(),
+                                   met_puppi_uncl_up.pt(), met_puppi_uncl_down.pt()});
 
     // std::cout << "MET: " << met.pt() << std::endl;
     // std::cout << "MET up: " << met_up.pt() << std::endl;
@@ -245,17 +250,21 @@ bool MonoTopSkim::filter(edm::Event &iEvent, const edm::EventSetup &iSetup)
     // std::cout << "Number of selected photons: " << selectedPhotons.size() << std::endl;
 
     // calculate very conservative hadronic recoil
-    auto hadr_recoil          = met.pt();
-    auto hadr_recoil_jes_up   = met_jes_up.pt();
-    auto hadr_recoil_jes_down = met_jes_down.pt();
-    auto hadr_recoil_jer_up   = met_jer_up.pt();
-    auto hadr_recoil_jer_down = met_jer_down.pt();
+    auto hadr_recoil           = met.pt();
+    auto hadr_recoil_jes_up    = met_jes_up.pt();
+    auto hadr_recoil_jes_down  = met_jes_down.pt();
+    auto hadr_recoil_jer_up    = met_jer_up.pt();
+    auto hadr_recoil_jer_down  = met_jer_down.pt();
+    auto hadr_recoil_uncl_up   = met_uncl_up.pt();
+    auto hadr_recoil_uncl_down = met_uncl_down.pt();
 
-    auto hadr_recoil_puppi          = met_puppi.pt();
-    auto hadr_recoil_puppi_jes_up   = met_puppi_jes_up.pt();
-    auto hadr_recoil_puppi_jes_down = met_puppi_jes_down.pt();
-    auto hadr_recoil_puppi_jer_up   = met_puppi_jer_up.pt();
-    auto hadr_recoil_puppi_jer_down = met_puppi_jer_down.pt();
+    auto hadr_recoil_puppi           = met_puppi.pt();
+    auto hadr_recoil_puppi_jes_up    = met_puppi_jes_up.pt();
+    auto hadr_recoil_puppi_jes_down  = met_puppi_jes_down.pt();
+    auto hadr_recoil_puppi_jer_up    = met_puppi_jer_up.pt();
+    auto hadr_recoil_puppi_jer_down  = met_puppi_jer_down.pt();
+    auto hadr_recoil_puppi_uncl_up   = met_puppi_uncl_up.pt();
+    auto hadr_recoil_puppi_uncl_down = met_puppi_uncl_down.pt();
 
     for (const auto &ele : selectedElectrons) {
         hadr_recoil += ele.pt();
@@ -263,12 +272,16 @@ bool MonoTopSkim::filter(edm::Event &iEvent, const edm::EventSetup &iSetup)
         hadr_recoil_jes_down += ele.pt();
         hadr_recoil_jer_up += ele.pt();
         hadr_recoil_jer_down += ele.pt();
+        hadr_recoil_uncl_up += ele.pt();
+        hadr_recoil_uncl_down += ele.pt();
 
         hadr_recoil_puppi += ele.pt();
         hadr_recoil_puppi_jes_up += ele.pt();
         hadr_recoil_puppi_jes_down += ele.pt();
         hadr_recoil_puppi_jer_up += ele.pt();
         hadr_recoil_puppi_jer_down += ele.pt();
+        hadr_recoil_puppi_uncl_up += ele.pt();
+        hadr_recoil_puppi_uncl_down += ele.pt();
     }
     for (const auto &mu : selectedMuons) {
         hadr_recoil += mu.pt();
@@ -276,12 +289,16 @@ bool MonoTopSkim::filter(edm::Event &iEvent, const edm::EventSetup &iSetup)
         hadr_recoil_jes_down += mu.pt();
         hadr_recoil_jer_up += mu.pt();
         hadr_recoil_jer_down += mu.pt();
+        hadr_recoil_uncl_up += mu.pt();
+        hadr_recoil_uncl_down += mu.pt();
 
         hadr_recoil_puppi += mu.pt();
         hadr_recoil_puppi_jes_up += mu.pt();
         hadr_recoil_puppi_jes_down += mu.pt();
         hadr_recoil_puppi_jer_up += mu.pt();
         hadr_recoil_puppi_jer_down += mu.pt();
+        hadr_recoil_puppi_uncl_up += mu.pt();
+        hadr_recoil_puppi_uncl_down += mu.pt();
     }
     for (const auto &ph : selectedPhotons) {
         hadr_recoil += ph.pt();
@@ -289,21 +306,26 @@ bool MonoTopSkim::filter(edm::Event &iEvent, const edm::EventSetup &iSetup)
         hadr_recoil_jes_down += ph.pt();
         hadr_recoil_jer_up += ph.pt();
         hadr_recoil_jer_down += ph.pt();
+        hadr_recoil_uncl_up += ph.pt();
+        hadr_recoil_uncl_down += ph.pt();
 
         hadr_recoil_puppi += ph.pt();
         hadr_recoil_puppi_jes_up += ph.pt();
         hadr_recoil_puppi_jes_down += ph.pt();
         hadr_recoil_puppi_jer_up += ph.pt();
         hadr_recoil_puppi_jer_down += ph.pt();
+        hadr_recoil_puppi_uncl_up += ph.pt();
+        hadr_recoil_puppi_uncl_down += ph.pt();
     }
 
     // std::cout << "Hadronic recoil: " << hadr_recoil.pt() << std::endl;
     // std::cout << "Puppi Hadronic recoil: " << hadr_recoil_puppi.pt() << std::endl;
 
     // determine the maximum hadronic recoil within the nominal value and the JES/JER variations
-    auto hadr_recoil_max = std::max({hadr_recoil, hadr_recoil_jes_up, hadr_recoil_jes_down, hadr_recoil_jer_up, hadr_recoil_jer_down});
-    auto hadr_recoil_puppi_max =
-        std::max({hadr_recoil_puppi, hadr_recoil_puppi_jes_up, hadr_recoil_puppi_jes_down, hadr_recoil_puppi_jer_up, hadr_recoil_puppi_jer_down});
+    auto hadr_recoil_max =
+        std::max({hadr_recoil, hadr_recoil_jes_up, hadr_recoil_jes_down, hadr_recoil_jer_up, hadr_recoil_jer_down, hadr_recoil_uncl_up, hadr_recoil_uncl_down});
+    auto hadr_recoil_puppi_max = std::max({hadr_recoil_puppi, hadr_recoil_puppi_jes_up, hadr_recoil_puppi_jes_down, hadr_recoil_puppi_jer_up,
+                                           hadr_recoil_puppi_jer_down, hadr_recoil_puppi_uncl_up, hadr_recoil_puppi_uncl_down});
 
     // check if we have sizeable hadronic recoil (200 GeV) in the event (hadronic analysis)
     bool recoil_criterium = (hadr_recoil_max >= metPtMin_) || (hadr_recoil_puppi_max >= metPtMin_);
