@@ -159,6 +159,72 @@ process.load("CondCore.CondDB.CondDB_cfi")
 process.load("Configuration.StandardSequences.MagneticField_38T_cff")
 process.load("Configuration.Geometry.GeometryRecoDB_cff")
 
+###############################################################
+# replace JER with the latest recommended ones to avoid possible error during calculation of Puppi MET uncertainties
+campaign = None
+if "2016" in options.dataEra:
+    campaign = "Summer16_25nsV1b"
+elif "2017" in options.dataEra:
+    campaign = "Fall17_V3b"
+elif "2018" in options.dataEra:
+    campaign = "Autumn18_V7b"
+else:
+    print "this should never happen"
+    exit()
+data_mc = "DATA" if options.isData else "MC"
+filename = campaign + "_" + data_mc + ".db"
+process.GlobalTag.toGet = cms.VPSet(
+    cms.PSet(record = cms.string("JetResolutionRcd"),
+                tag = cms.string("JR"+"_"+campaign+"_"+data_mc+"_EtaResolution_AK4PFPuppi"),
+            connect = cms.string("sqlite_fip:MonoTop/MonoTopSkim/data/jerfiles/"+filename)
+    ),
+    cms.PSet(record = cms.string("JetResolutionRcd"),
+                tag = cms.string("JR"+"_"+campaign+"_"+data_mc+"_PhiResolution_AK4PFPuppi"),
+            connect = cms.string("sqlite_fip:MonoTop/MonoTopSkim/data/jerfiles/"+filename)
+    ),
+    cms.PSet(record = cms.string("JetResolutionRcd"),
+                tag = cms.string("JR"+"_"+campaign+"_"+data_mc+"_PtResolution_AK4PFPuppi"),
+            connect = cms.string("sqlite_fip:MonoTop/MonoTopSkim/data/jerfiles/"+filename)
+    ),
+    cms.PSet(record = cms.string("JetResolutionScaleFactorRcd"),
+                tag = cms.string("JR"+"_"+campaign+"_"+data_mc+"_SF_AK4PFPuppi"),
+            connect = cms.string("sqlite_fip:MonoTop/MonoTopSkim/data/jerfiles/"+filename)
+    ),
+    
+    cms.PSet(record = cms.string("JetResolutionRcd"),
+                tag = cms.string("JR"+"_"+campaign+"_"+data_mc+"_EtaResolution_AK4PFchs"),
+            connect = cms.string("sqlite_fip:MonoTop/MonoTopSkim/data/jerfiles/"+filename)
+    ),
+    cms.PSet(record = cms.string("JetResolutionRcd"),
+                tag = cms.string("JR"+"_"+campaign+"_"+data_mc+"_PhiResolution_AK4PFchs"),
+            connect = cms.string("sqlite_fip:MonoTop/MonoTopSkim/data/jerfiles/"+filename)
+    ),
+    cms.PSet(record = cms.string("JetResolutionRcd"),
+                tag = cms.string("JR"+"_"+campaign+"_"+data_mc+"_PtResolution_AK4PFchs"),
+            connect = cms.string("sqlite_fip:MonoTop/MonoTopSkim/data/jerfiles/"+filename)
+    ),
+    cms.PSet(record = cms.string("JetResolutionScaleFactorRcd"),
+                tag = cms.string("JR"+"_"+campaign+"_"+data_mc+"_SF_AK4PFchs"),
+            connect = cms.string("sqlite_fip:MonoTop/MonoTopSkim/data/jerfiles/"+filename)
+    ),
+    
+    cms.PSet(record = cms.string("JetResolutionRcd"),
+                tag = cms.string("JR"+"_"+campaign+"_"+data_mc+"_EtaResolution_AK4PF"),
+            connect = cms.string("sqlite_fip:MonoTop/MonoTopSkim/data/jerfiles/"+filename)
+    ),
+    cms.PSet(record = cms.string("JetResolutionRcd"),
+                tag = cms.string("JR"+"_"+campaign+"_"+data_mc+"_PhiResolution_AK4PF"),
+            connect = cms.string("sqlite_fip:MonoTop/MonoTopSkim/data/jerfiles/"+filename)
+    ),
+    cms.PSet(record = cms.string("JetResolutionRcd"),
+                tag = cms.string("JR"+"_"+campaign+"_"+data_mc+"_PtResolution_AK4PF"),
+            connect = cms.string("sqlite_fip:MonoTop/MonoTopSkim/data/jerfiles/"+filename)
+    ),
+    cms.PSet(record = cms.string("JetResolutionScaleFactorRcd"),
+                tag = cms.string("JR"+"_"+campaign+"_"+data_mc+"_SF_AK4PF"),
+            connect = cms.string("sqlite_fip:MonoTop/MonoTopSkim/data/jerfiles/"+filename)
+    )
+)
 ####################### Jet stuff #############################
 
 # cluster AK15 jets and use PUPPI pileup mitigation method
