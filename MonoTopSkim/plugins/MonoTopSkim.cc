@@ -52,15 +52,16 @@ class MonoTopSkim : public edm::EDFilter {
     // ----------member data ---------------------------
 
     // data access tokens
-    edm::EDGetTokenT< pat::ElectronCollection > EDMElectronsToken;  // electrons
-    edm::EDGetTokenT< pat::MuonCollection >     EDMMuonsToken;      // muons
-    edm::EDGetTokenT< pat::PhotonCollection >   EDMPhotonsToken;    // photons
-    edm::EDGetTokenT< pat::JetCollection >      EDMAK4JetsToken;    // AK4 jets
-    edm::EDGetTokenT< pat::JetCollection >      EDMAK8JetsToken;    // AK8 jets
-    edm::EDGetTokenT< pat::JetCollection >      EDMAK15JetsToken_;  // AK15 jets
-    edm::EDGetTokenT< std::vector< pat::MET > > EDMMETToken;        // PF MET
-    edm::EDGetTokenT< std::vector< pat::MET > > EDMPuppiMETToken;   // PUPPI MET
-    edm::EDGetTokenT< reco::VertexCollection >  EDMVertexToken;     // vertex
+    edm::EDGetTokenT< pat::ElectronCollection > EDMElectronsToken;     // electrons
+    edm::EDGetTokenT< pat::MuonCollection >     EDMMuonsToken;         // muons
+    edm::EDGetTokenT< pat::PhotonCollection >   EDMPhotonsToken;       // photons
+    edm::EDGetTokenT< pat::JetCollection >      EDMAK4JetsPuppiToken;  // AK4 Puppi jets
+    edm::EDGetTokenT< pat::JetCollection >      EDMAK4JetsCHSToken;    // AK4 CHS jets
+    edm::EDGetTokenT< pat::JetCollection >      EDMAK8JetsToken;       // AK8 jets
+    edm::EDGetTokenT< pat::JetCollection >      EDMAK15JetsToken_;     // AK15 jets
+    edm::EDGetTokenT< std::vector< pat::MET > > EDMMETToken;           // PF MET
+    edm::EDGetTokenT< std::vector< pat::MET > > EDMPuppiMETToken;      // PUPPI MET
+    edm::EDGetTokenT< reco::VertexCollection >  EDMVertexToken;        // vertex
     // edm::EDGetTokenT< double >                  EDMRhoToken;     //  pileup density
 
     const int    minJetsAK4_;
@@ -93,7 +94,8 @@ MonoTopSkim::MonoTopSkim(const edm::ParameterSet &iConfig) :
     EDMElectronsToken{consumes< pat::ElectronCollection >(iConfig.getParameter< edm::InputTag >("electrons"))},
     EDMMuonsToken{consumes< pat::MuonCollection >(iConfig.getParameter< edm::InputTag >("muons"))},
     EDMPhotonsToken{consumes< std::vector< pat::Photon > >(iConfig.getParameter< edm::InputTag >("photons"))},
-    EDMAK4JetsToken{consumes< pat::JetCollection >(iConfig.getParameter< edm::InputTag >("AK4jets"))},
+    EDMAK4JetsPuppiToken{consumes< pat::JetCollection >(iConfig.getParameter< edm::InputTag >("AK4jets_puppi"))},
+    EDMAK4JetsCHSToken{consumes< pat::JetCollection >(iConfig.getParameter< edm::InputTag >("AK4jets_chs"))},
     EDMAK8JetsToken{consumes< pat::JetCollection >(iConfig.getParameter< edm::InputTag >("AK8jets"))},
     EDMAK15JetsToken_{consumes< pat::JetCollection >(iConfig.getParameter< edm::InputTag >("AK15jets"))},
     EDMMETToken{consumes< std::vector< pat::MET > >(iConfig.getParameter< edm::InputTag >("met"))},
@@ -178,8 +180,10 @@ bool MonoTopSkim::filter(edm::Event &iEvent, const edm::EventSetup &iSetup)
     bool met_criterium = (met_max >= metPtMin_) || (met_puppi_max >= metPtMin_);
 
     // get AK4 jets
-    edm::Handle< pat::JetCollection > ak4Jets;
-    iEvent.getByToken(EDMAK4JetsToken, ak4Jets);
+    edm::Handle< pat::JetCollection > ak4JetsPuppi;
+    iEvent.getByToken(EDMAK4JetsPuppiToken, ak4JetsPuppi);
+    edm::Handle< pat::JetCollection > ak4JetsCHS;
+    iEvent.getByToken(EDMAK4JetsCHSToken, ak4JetsCHS);
 
     // get AK8 jets
     edm::Handle< pat::JetCollection > ak8Jets;
@@ -189,18 +193,20 @@ bool MonoTopSkim::filter(edm::Event &iEvent, const edm::EventSetup &iSetup)
     edm::Handle< pat::JetCollection > ak15Jets;
     iEvent.getByToken(EDMAK15JetsToken_, ak15Jets);
 
-    int n_ak4jets  = ak4Jets->size();
-    int n_ak8jets  = ak8Jets->size();
-    int n_ak15jets = ak15Jets->size();
+    int n_ak4jets_puppi = ak4JetsPuppi->size();
+    int n_ak4jets_chs   = ak4JetsCHS->size();
+    int n_ak8jets       = ak8Jets->size();
+    int n_ak15jets      = ak15Jets->size();
 
     // std::cout << "Number of AK4 jets: " << n_ak4jets << std::endl;
     // std::cout << "Number of AK8 jets: " << n_ak8jets << std::endl;
     // std::cout << "Number of AK15 jets: " << n_ak15jets << std::endl;
 
-    auto leading_jet_pt = n_ak4jets > 0 ? ak4Jets->at(0).pt() : 0.;
+    auto leading_puppi_jet_pt = n_ak4jets_puppi > 0 ? ak4JetsPuppi->at(0).pt() : 0.;
+    auto leading_chs_jet_pt   = n_ak4jets_chs > 0 ? ak4JetsCHS->at(0).pt() : 0.;
 
     // want at least one fat jet for hadronic monotop regions (hadronic analysis)
-    bool jet_criterium = ((n_ak8jets >= minJetsAK8_) || (n_ak15jets >= minJetsAK15_) || (leading_jet_pt >= 100.));
+    bool jet_criterium = ((n_ak8jets >= minJetsAK8_) || (n_ak15jets >= minJetsAK15_) || (leading_puppi_jet_pt >= 100.) || (leading_chs_jet_pt >= 100.));
 
     // if met criterium and fat jet criterium is fulfilled, keep the event (hadronic analysis)
     if (met_criterium && jet_criterium) return true;
@@ -403,8 +409,8 @@ bool MonoTopSkim::filter(edm::Event &iEvent, const edm::EventSetup &iSetup)
     // auto m_W_transv_puppi       = TMath::Sqrt(2 * leading_lepton.pt() * met_puppi.pt() * (1 - cos_dphi_met_lep_puppi));
 
     // require at least one tight lepton, at least one jet with 50 GeV and at least around 100 GeV MET
-    bool lepton_jet_met_criterium =
-        (n_leptons >= 1) && (n_ak4jets >= minJetsAK4_) && (leading_jet_pt >= 50.) && (met_max >= 90. || met_puppi_max >= 90.) && m_t_criterium;
+    bool lepton_jet_met_criterium = (n_leptons >= 1) && (n_ak4jets_puppi >= minJetsAK4_ || n_ak4jets_chs >= minJetsAK4_) &&
+                                    (leading_puppi_jet_pt >= 50. || leading_chs_jet_pt >= 50.) && (met_max >= 90. || met_puppi_max >= 90.) && m_t_criterium;
 
     if (lepton_jet_met_criterium) return true;
 
