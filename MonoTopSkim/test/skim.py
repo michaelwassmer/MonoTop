@@ -176,53 +176,65 @@ filename = campaign + "_" + data_mc + ".db"
 process.GlobalTag.toGet = cms.VPSet(
     cms.PSet(record = cms.string("JetResolutionRcd"),
                 tag = cms.string("JR"+"_"+campaign+"_"+data_mc+"_EtaResolution_AK4PFPuppi"),
-            connect = cms.string("sqlite_fip:MonoTop/MonoTopSkim/data/jerfiles/"+filename)
+            connect = cms.string("sqlite_fip:MonoTop/MonoTopSkim/data/jerfiles/"+filename),
+              label = cms.untracked.string("AK4PFPuppi_eta")
     ),
     cms.PSet(record = cms.string("JetResolutionRcd"),
                 tag = cms.string("JR"+"_"+campaign+"_"+data_mc+"_PhiResolution_AK4PFPuppi"),
-            connect = cms.string("sqlite_fip:MonoTop/MonoTopSkim/data/jerfiles/"+filename)
+            connect = cms.string("sqlite_fip:MonoTop/MonoTopSkim/data/jerfiles/"+filename),
+              label = cms.untracked.string("AK4PFPuppi_phi")
     ),
     cms.PSet(record = cms.string("JetResolutionRcd"),
                 tag = cms.string("JR"+"_"+campaign+"_"+data_mc+"_PtResolution_AK4PFPuppi"),
-            connect = cms.string("sqlite_fip:MonoTop/MonoTopSkim/data/jerfiles/"+filename)
+            connect = cms.string("sqlite_fip:MonoTop/MonoTopSkim/data/jerfiles/"+filename),
+              label = cms.untracked.string("AK4PFPuppi_pt")
     ),
     cms.PSet(record = cms.string("JetResolutionScaleFactorRcd"),
                 tag = cms.string("JR"+"_"+campaign+"_"+data_mc+"_SF_AK4PFPuppi"),
-            connect = cms.string("sqlite_fip:MonoTop/MonoTopSkim/data/jerfiles/"+filename)
+            connect = cms.string("sqlite_fip:MonoTop/MonoTopSkim/data/jerfiles/"+filename),
+              label = cms.untracked.string("AK4PFPuppi")
     ),
     
     cms.PSet(record = cms.string("JetResolutionRcd"),
                 tag = cms.string("JR"+"_"+campaign+"_"+data_mc+"_EtaResolution_AK4PFchs"),
-            connect = cms.string("sqlite_fip:MonoTop/MonoTopSkim/data/jerfiles/"+filename)
+            connect = cms.string("sqlite_fip:MonoTop/MonoTopSkim/data/jerfiles/"+filename),
+              label = cms.untracked.string("AK4PFchs_eta")
     ),
     cms.PSet(record = cms.string("JetResolutionRcd"),
                 tag = cms.string("JR"+"_"+campaign+"_"+data_mc+"_PhiResolution_AK4PFchs"),
-            connect = cms.string("sqlite_fip:MonoTop/MonoTopSkim/data/jerfiles/"+filename)
+            connect = cms.string("sqlite_fip:MonoTop/MonoTopSkim/data/jerfiles/"+filename),
+              label = cms.untracked.string("AK4PFchs_phi")
     ),
     cms.PSet(record = cms.string("JetResolutionRcd"),
                 tag = cms.string("JR"+"_"+campaign+"_"+data_mc+"_PtResolution_AK4PFchs"),
-            connect = cms.string("sqlite_fip:MonoTop/MonoTopSkim/data/jerfiles/"+filename)
+            connect = cms.string("sqlite_fip:MonoTop/MonoTopSkim/data/jerfiles/"+filename),
+              label = cms.untracked.string("AK4PFchs_pt")
     ),
     cms.PSet(record = cms.string("JetResolutionScaleFactorRcd"),
                 tag = cms.string("JR"+"_"+campaign+"_"+data_mc+"_SF_AK4PFchs"),
-            connect = cms.string("sqlite_fip:MonoTop/MonoTopSkim/data/jerfiles/"+filename)
+            connect = cms.string("sqlite_fip:MonoTop/MonoTopSkim/data/jerfiles/"+filename),
+              label = cms.untracked.string("AK4PFchs")
     ),
     
     cms.PSet(record = cms.string("JetResolutionRcd"),
                 tag = cms.string("JR"+"_"+campaign+"_"+data_mc+"_EtaResolution_AK4PF"),
-            connect = cms.string("sqlite_fip:MonoTop/MonoTopSkim/data/jerfiles/"+filename)
+            connect = cms.string("sqlite_fip:MonoTop/MonoTopSkim/data/jerfiles/"+filename),
+              label = cms.untracked.string("AK4PF_eta")
     ),
     cms.PSet(record = cms.string("JetResolutionRcd"),
                 tag = cms.string("JR"+"_"+campaign+"_"+data_mc+"_PhiResolution_AK4PF"),
-            connect = cms.string("sqlite_fip:MonoTop/MonoTopSkim/data/jerfiles/"+filename)
+            connect = cms.string("sqlite_fip:MonoTop/MonoTopSkim/data/jerfiles/"+filename),
+              label = cms.untracked.string("AK4PF_phi")
     ),
     cms.PSet(record = cms.string("JetResolutionRcd"),
                 tag = cms.string("JR"+"_"+campaign+"_"+data_mc+"_PtResolution_AK4PF"),
-            connect = cms.string("sqlite_fip:MonoTop/MonoTopSkim/data/jerfiles/"+filename)
+            connect = cms.string("sqlite_fip:MonoTop/MonoTopSkim/data/jerfiles/"+filename),
+              label = cms.untracked.string("AK4PF_pt")
     ),
     cms.PSet(record = cms.string("JetResolutionScaleFactorRcd"),
                 tag = cms.string("JR"+"_"+campaign+"_"+data_mc+"_SF_AK4PF"),
-            connect = cms.string("sqlite_fip:MonoTop/MonoTopSkim/data/jerfiles/"+filename)
+            connect = cms.string("sqlite_fip:MonoTop/MonoTopSkim/data/jerfiles/"+filename),
+              label = cms.untracked.string("AK4PF")
     )
 )
 ####################### Jet stuff #############################
