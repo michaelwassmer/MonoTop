@@ -255,9 +255,9 @@ jetToolbox(
     addNsub=True,
     maxTau=3,  # add Nsubjettiness tau1, tau2, tau3, tau4
     JETCorrPayload="AK8PFPuppi",
-    #JETCorrLevels = ['L1FastJet', 'L2Relative', 'L3Absolute', 'L2L3Residual'],
+    JETCorrLevels = ['L1FastJet', 'L2Relative', 'L3Absolute', 'L2L3Residual'],
     subJETCorrPayload='AK4PFPuppi',
-    #subJETCorrLevels = ['L1FastJet', 'L2Relative', 'L3Absolute', 'L2L3Residual'],
+    subJETCorrLevels = ['L1FastJet', 'L2Relative', 'L3Absolute', 'L2L3Residual'],
     runOnMC=not options.isData,
     dataTier="miniAOD",
     Cut="pt > 150. && abs(rapidity()) < 2.4",
@@ -283,9 +283,9 @@ jetToolbox(
     addNsub=True,
     maxTau=3,  # add Nsubjettiness tau1, tau2, tau3, tau4
     JETCorrPayload="AK8PFPuppi",
-    #JETCorrLevels = ['L1FastJet', 'L2Relative', 'L3Absolute', 'L2L3Residual'],
+    JETCorrLevels = ['L1FastJet', 'L2Relative', 'L3Absolute', 'L2L3Residual'],
     subJETCorrPayload='AK4PFPuppi',
-    #subJETCorrLevels = ['L1FastJet', 'L2Relative', 'L3Absolute', 'L2L3Residual'],
+    subJETCorrLevels = ['L1FastJet', 'L2Relative', 'L3Absolute', 'L2L3Residual'],
     runOnMC=not options.isData,
     dataTier="miniAOD",
     Cut="pt > 170. && abs(rapidity()) < 2.4",
@@ -303,7 +303,7 @@ jetToolbox(
     "noOutput",
     updateCollection="slimmedJets",
     JETCorrPayload="AK4PFchs",
-    #JETCorrLevels = ['L1FastJet', 'L2Relative', 'L3Absolute', 'L2L3Residual'],
+    JETCorrLevels = ['L1FastJet', 'L2Relative', 'L3Absolute', 'L2L3Residual'],
     bTagDiscriminators=[
         "pfDeepFlavourJetTags:probb",
         "pfDeepFlavourJetTags:probbb",
@@ -325,7 +325,7 @@ jetToolbox(
     "noOutput",
     updateCollection="slimmedJetsPuppi",
     JETCorrPayload="AK4PFPuppi",
-    #JETCorrLevels = ['L1FastJet', 'L2Relative', 'L3Absolute', 'L2L3Residual'],
+    JETCorrLevels = ['L1FastJet', 'L2Relative', 'L3Absolute', 'L2L3Residual'],
     bTagDiscriminators=[
         "pfDeepFlavourJetTags:probb",
         "pfDeepFlavourJetTags:probbb",
