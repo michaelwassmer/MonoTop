@@ -664,6 +664,8 @@ process.OUT = cms.OutputModule(
             "drop *_selected*AK4*_*calo*_SKIM",
             "drop *_selected*AK4*_*tagInfos*_SKIM",
             "drop *_selected*AK4*_*pfCandidates*_SKIM",
+            "keep double_MonoTopSkim_HadronicRecoilPUPPIMETSkim_SKIM",
+            "keep double_MonoTopSkim_HadronicRecoilPFMETSkim_SKIM"
         ]
     ),
     SelectEvents=cms.untracked.PSet(SelectEvents=cms.vstring("skim")),

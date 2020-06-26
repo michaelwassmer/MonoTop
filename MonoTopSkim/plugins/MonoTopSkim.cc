@@ -122,6 +122,8 @@ MonoTopSkim::MonoTopSkim(const edm::ParameterSet &iConfig) :
     isData{iConfig.getParameter< bool >("isData")},
     era{iConfig.getParameter< std::string >("era")}
 {
+    produces< double >("HadronicRecoilPUPPIMETSkim");
+    produces< double >("HadronicRecoilPFMETSkim");
 }
 
 MonoTopSkim::~MonoTopSkim()
@@ -209,7 +211,7 @@ bool MonoTopSkim::filter(edm::Event &iEvent, const edm::EventSetup &iSetup)
     bool jet_criterium = ((n_ak8jets >= minJetsAK8_) || (n_ak15jets >= minJetsAK15_) || (leading_puppi_jet_pt >= 100.) || (leading_chs_jet_pt >= 100.));
 
     // if met criterium and fat jet criterium is fulfilled, keep the event (hadronic analysis)
-    if (met_criterium && jet_criterium) return true;
+    // if (met_criterium && jet_criterium) return true;
 
     // get slimmedElectrons
     edm::Handle< pat::ElectronCollection > hElectrons;
@@ -324,6 +326,8 @@ bool MonoTopSkim::filter(edm::Event &iEvent, const edm::EventSetup &iSetup)
         hadr_recoil_puppi_uncl_down += ph.pt();
     }
 
+    iEvent.put(std::make_unique< double >(hadr_recoil), "HadronicRecoilPFMETSkim");
+    iEvent.put(std::make_unique< double >(hadr_recoil_puppi), "HadronicRecoilPUPPIMETSkim");
     // std::cout << "Hadronic recoil: " << hadr_recoil.pt() << std::endl;
     // std::cout << "Puppi Hadronic recoil: " << hadr_recoil_puppi.pt() << std::endl;
 
@@ -337,7 +341,7 @@ bool MonoTopSkim::filter(edm::Event &iEvent, const edm::EventSetup &iSetup)
     bool recoil_criterium = (hadr_recoil_max >= metPtMin_) || (hadr_recoil_puppi_max >= metPtMin_);
 
     // keep the event if recoil and fatjet criteria are fulfilled (hadronic analysis)
-    if (recoil_criterium && jet_criterium) return true;
+    if ((met_criterium || recoil_criterium) && jet_criterium) return true;
 
     // -----------------------------------------------------------------------------------------------------------
     // Here begins the skimming part for the leptonic analysis
