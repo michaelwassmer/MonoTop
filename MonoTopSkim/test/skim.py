@@ -624,6 +624,34 @@ process.MonoTopSkim.photons = cms.InputTag("slimmedPhotons", "", process.name_()
 process.MonoTopSkim.met = cms.InputTag("slimmedMETs", "", process.name_())
 process.MonoTopSkim.met_puppi = cms.InputTag("slimmedMETsPuppi", "", process.name_())
 
+if "2016" in options.dataEra:
+    if options.isData:
+        process.MonoTopSkim.met_original = cms.InputTag("slimmedMETs", "", "DQM")
+        process.MonoTopSkim.met_puppi_original = cms.InputTag("slimmedMETsPuppi", "", "DQM")
+    else:
+        process.MonoTopSkim.met_original = cms.InputTag("slimmedMETs", "", "PAT")
+        process.MonoTopSkim.met_puppi_original = cms.InputTag("slimmedMETsPuppi", "", "PAT")
+elif "2017" in options.dataEra:
+    if options.isData:
+        process.MonoTopSkim.met_original = cms.InputTag("slimmedMETs", "", "PAT")
+        process.MonoTopSkim.met_puppi_original = cms.InputTag("slimmedMETsPuppi", "", "PAT")
+    else:
+        process.MonoTopSkim.met_original = cms.InputTag("slimmedMETs", "", "PAT")
+        process.MonoTopSkim.met_puppi_original = cms.InputTag("slimmedMETsPuppi", "", "PAT")
+elif "2018" in options.dataEra:
+    if options.isData:
+        process.MonoTopSkim.met_original = cms.InputTag("slimmedMETs", "", "RECO")
+        process.MonoTopSkim.met_puppi_original = cms.InputTag("slimmedMETsPuppi", "", "RECO")
+    else:
+        process.MonoTopSkim.met_original = cms.InputTag("slimmedMETs", "", "PAT")
+        process.MonoTopSkim.met_puppi_original = cms.InputTag("slimmedMETsPuppi", "", "PAT")
+else:
+    raise Exception(
+        "dataEra "
+        + options.dataEra
+        + " not supported: USE dataEra=2016/2017/2018"
+    )
+
 ###############################################################
 
 process.content = cms.EDAnalyzer("EventContentAnalyzer")
@@ -665,7 +693,9 @@ process.OUT = cms.OutputModule(
             "drop *_selected*AK4*_*tagInfos*_SKIM",
             "drop *_selected*AK4*_*pfCandidates*_SKIM",
             "keep double_MonoTopSkim_HadronicRecoilPUPPIMETSkim_SKIM",
-            "keep double_MonoTopSkim_HadronicRecoilPFMETSkim_SKIM"
+            "keep double_MonoTopSkim_HadronicRecoilPFMETSkim_SKIM",
+            "keep double_MonoTopSkim_HadronicRecoilPUPPIMETOriginalSkim_SKIM",
+            "keep double_MonoTopSkim_HadronicRecoilPFMETOriginalSkim_SKIM"
         ]
     ),
     SelectEvents=cms.untracked.PSet(SelectEvents=cms.vstring("skim")),
