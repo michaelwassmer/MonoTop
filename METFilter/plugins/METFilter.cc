@@ -19,7 +19,8 @@
 
 // system include files
 #include <memory>
-
+#include <iostream>
+#include <string>
 // user include files
 #include "FWCore/Framework/interface/Frameworkfwd.h"
 #include "FWCore/Framework/interface/stream/EDFilter.h"
@@ -29,7 +30,6 @@
 
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "FWCore/Utilities/interface/StreamID.h"
-#include <string>
 #include "FWCore/Common/interface/TriggerNames.h"
 #include "DataFormats/Common/interface/TriggerResults.h"
 
@@ -49,7 +49,9 @@ class METFilter : public edm::stream::EDFilter<> {
       virtual bool filter(edm::Event&, const edm::EventSetup&) override;
       virtual void endStream() override;
       
+      // token for the filter bits
       edm::EDGetTokenT< edm::TriggerResults > filterBitsToken;
+      // vector for the filter names
       std::vector<std::string> filterNames;
 
       //virtual void beginRun(edm::Run const&, edm::EventSetup const&) override;
@@ -72,8 +74,8 @@ class METFilter : public edm::stream::EDFilter<> {
 // constructors and destructor
 //
 METFilter::METFilter(const edm::ParameterSet& iConfig) :
-  filterBitsToken{consumes< edm::TriggerResults >(iConfig.getParameter< edm::InputTag >("filterData"))},
-  filterNames{iConfig.getParameter< std::vector< std::string > >("filterNames")}
+  filterBitsToken{consumes< edm::TriggerResults >(iConfig.getParameter< edm::InputTag >("filterData"))}, // filter bits
+  filterNames{iConfig.getParameter< std::vector< std::string > >("filterNames")} // names of filters
 {
    //now do what ever initialization is needed
 
@@ -97,15 +99,25 @@ METFilter::~METFilter()
 bool
 METFilter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
+    // get filter information
     edm::Handle< edm::TriggerResults > filterData;
     iEvent.getByToken(filterBitsToken, filterData);
+    // get filter names in event
     const edm::TriggerNames& names = iEvent.triggerNames(*filterData);
+    // loop over filters
     for (size_t i = 0; i < filterData->size(); i++) {
+        // get filter name
         std::string name   = names.triggerName(i);
+        //std::cout << "MET Filter: " << name << std::endl;
+        // check if the filter at hand is in the list of desired filters
         if(std::find(filterNames.begin(), filterNames.end(), name) == filterNames.end()) continue;
+        // if the filter is in the list, check if the event passes the filter
         bool filter_decision = filterData->accept(i);
+        //std::cout << "Filter decision: " << filter_decision << std::endl;
+        // if the the event does not pass the filter, reject the event
         if(not filter_decision) return false;
     }
+    // if the event passes all filters, keep the event
     return true;
 }
 
