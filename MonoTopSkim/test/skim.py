@@ -160,7 +160,7 @@ process.load("Configuration.StandardSequences.MagneticField_38T_cff")
 process.load("Configuration.Geometry.GeometryRecoDB_cff")
 
 ###############################################################
-# replace JER with the latest recommended ones to avoid possible error during calculation of Puppi MET uncertainties
+# replace JER with the latest recommended ones to avoid possible error during calculation of Puppi MET uncertainties because of Puppi JER starting at 30 GeV
 campaign = None
 if "2016" in options.dataEra:
     campaign = "Summer16_25nsV1b"
@@ -564,17 +564,12 @@ runMetCorAndUncFromMiniAOD(
 process.puppiNoLep.useExistingWeights = True
 process.puppi.useExistingWeights = True
 
-process.load("RecoMET.METFilters.primaryVertexFilter_cfi")
-process.primaryVertexFilter.vertexCollection = cms.InputTag(
-    "offlineSlimmedPrimaryVertices"
-)
-process.load("RecoMET.METFilters.globalSuperTightHalo2016Filter_cfi")
-process.load("CommonTools.RecoAlgos.HBHENoiseFilterResultProducer_cfi")
-process.load("CommonTools.RecoAlgos.HBHENoiseFilter_cfi")
-process.load("RecoMET.METFilters.EcalDeadCellTriggerPrimitiveFilter_cfi")
-#process.load("RecoMET.METFilters.BadPFMuonFilter_cfi")
-#process.BadPFMuonFilter.muons = cms.InputTag("slimmedMuons")
-#process.load("RecoMET.METFilters.eeBadScFilter_cfi")
+####################### MET filters ##########################
+process.load("MonoTop.METFilter.METFilter_cfi")
+if options.isData:
+    process.METFilter.filterData = cms.InputTag("TriggerResults","","RECO")
+    process.METFilter.filterNames += ["Flag_eeBadScFilter"]
+#print process.METFilter.filterNames
 
 ###############################################################
 
@@ -702,19 +697,7 @@ process.OUT = cms.OutputModule(
 )
 
 process.skim = cms.Path()
-
-# these are MET filters which can be run on any era (data and mc) and do not need special recipes
-process.skim *= (
-    process.HBHENoiseFilterResultProducer
-    * process.HBHENoiseFilter
-    * process.HBHENoiseIsoFilter
-)
-process.skim *= process.primaryVertexFilter
-process.skim *= process.globalSuperTightHalo2016Filter
-process.skim *= process.EcalDeadCellTriggerPrimitiveFilter
-#process.skim *= process.BadPFMuonFilter
-#if options.isData:
-#    process.skim *= process.eeBadScFilter
+process.skim *= process.METFilter
 process.skim *= process.MonoTopSkim
 
 # egamma sequence to recalculate electron/photon IDs
