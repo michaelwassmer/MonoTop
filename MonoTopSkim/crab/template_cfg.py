@@ -1,4 +1,4 @@
-from CRABClient.UserUtilities import config, getUsernameFromSiteDB
+from CRABClient.UserUtilities import config
 
 config = config()
 
@@ -7,7 +7,7 @@ config.General.workArea = "crab_skims"
 config.General.transferLogs = True
 
 config.JobType.pluginName = "Analysis"
-config.JobType.psetName = "/nfs/dust/cms/user/mwassmer/MonoTop/Skimming/CMSSW_10_2_18/src/MonoTop/MonoTopSkim/test/skim.py"
+config.JobType.psetName = "/nfs/dust/cms/user/mwassmer/MonoTop/Skimming/Skims/CMSSW_10_2_18/src/MonoTop/MonoTopSkim/test/skim.py"
 config.JobType.outputFiles = ["Skim.root"]
 # config.JobType.maxJobRuntimeMin = 2800
 config.JobType.maxMemoryMB = 2000
@@ -22,10 +22,10 @@ config.JobType.sendPythonFolder = True
 config.Data.inputDataset = "THEINPUTDATASET"
 config.Data.inputDBS = "global"
 config.Data.splitting = "Automatic"
-config.Data.unitsPerJob = 600
+config.Data.unitsPerJob = 480
 config.Data.publication = True
 config.Data.publishDBS = "phys03"
-config.Data.outputDatasetTag = "KIT_Monotop_skims_2018_102X"+"APPEND"+"_v2"
+config.Data.outputDatasetTag = "KIT_Monotop_skims_2017_102X"+"APPEND"+"_v2"
 
 config.User.voGroup = "dcms"
 
