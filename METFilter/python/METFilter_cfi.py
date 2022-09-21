@@ -10,5 +10,8 @@ METFilter = cms.EDFilter(
                       "Flag_HBHENoiseIsoFilter",
                       "Flag_EcalDeadCellTriggerPrimitiveFilter",
                       "Flag_BadPFMuonFilter",
+                      "Flag_BadPFMuonDzFilter",
+                      "Flag_eeBadScFilter",
+                      #"Flag_ecalBadCalibFilter",
                   ])
 )
