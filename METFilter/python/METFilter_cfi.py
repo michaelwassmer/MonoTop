@@ -1,7 +1,7 @@
 import FWCore.ParameterSet.Config as cms
 
 METFilter = cms.EDFilter(
-    "METFilter",
+    "FlagFilter",
     filterData = cms.InputTag("TriggerResults","","PAT"),
     filterNames = cms.vstring([
                       "Flag_goodVertices",
@@ -13,5 +13,7 @@ METFilter = cms.EDFilter(
                       "Flag_BadPFMuonDzFilter",
                       "Flag_eeBadScFilter",
                       #"Flag_ecalBadCalibFilter",
-                  ])
+                  ]),
+    taggingMode = cms.bool(False),
+    OR_mode = cms.bool(False)
 )
