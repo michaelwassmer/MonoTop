@@ -5,7 +5,9 @@ TriggerFilter = cms.EDFilter(
     filterData = cms.InputTag("TriggerResults","","HLT"),
     filterNames = cms.vstring([
                       "HLT_IsoMu2[0-9]_v([0-9]|[1-9][0-9])$",
-                      "HLT_PFMET.*"
+                      "HLT_PFMET.*",
+#                      "HLT_Ele([0-9]|[1-9][0-9])_WPTight_Gsf_v([0-9]|[1-9][0-9])$",
+                      "HLT_PFHT(900|1050)_v([0-9]|[1-9][0-9])$"
                   ]),
     taggingMode = cms.bool(True),
     OR_mode = cms.bool(True)
