@@ -49,15 +49,20 @@ class FlagFilter : public edm::stream::EDFilter<> {
     virtual void endStream() override;
 
     // token for the filter bits
-    edm::EDGetTokenT< edm::TriggerResults > filterBitsToken;
+    const edm::EDGetTokenT< edm::TriggerResults > filterBitsToken;
     // vector for the filter names
-    std::vector< std::string > filterNames;
+    const std::vector< std::string > filterNames;
     // flag for tagging mode
-    bool taggingMode;
+    const bool taggingMode;
     // AND or OR mode
-    bool OR_mode;
+    const bool OR_mode;
+    // single filter decisions
+    std::vector< std::string > filters;
+    std::vector< int > indices;
 
-    // virtual void beginRun(edm::Run const&, edm::EventSetup const&) override;
+    bool run_start;
+
+    virtual void beginRun(edm::Run const&, edm::EventSetup const&) override;
     // virtual void endRun(edm::Run const&, edm::EventSetup const&) override;
     // virtual void beginLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&) override;
     // virtual void endLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&) override;
@@ -105,33 +110,43 @@ bool FlagFilter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
     // get filter information
     edm::Handle< edm::TriggerResults > filterData;
     iEvent.getByToken(filterBitsToken, filterData);
-    // get filter names in event
-    const edm::TriggerNames& names = iEvent.triggerNames(*filterData);
+
+    // get filter names and indices in first event of currently processed run
+    if(run_start) {
+        const edm::TriggerNames& names = iEvent.triggerNames(*filterData);
+        for (size_t i = 0; i < filterData->size(); i++) {
+            // get filter name
+            std::string name = names.triggerName(i);
+            // check if the filter at hand is in the list of desired filters
+            bool filterfound = false;
+            bool regexfound = false;
+            for(auto filterName : filterNames) {
+                filterfound = filterfound or (filterName == name);
+                if (filterfound) break;
+                regexfound = regexfound or (std::regex_match(name, std::regex(filterName)));
+                if (regexfound) break;
+            }
+            if (not (filterfound or regexfound)) continue;
+            // if the filter is in the list, check if the event passes the desired filters
+            filters.push_back(name);
+            indices.push_back(i);
+        }
+        run_start = false;
+    }
     // single filter decisions
     std::vector< bool > decisions;
-    std::vector< std::string > filters;
     // final decisions
     bool decision_AND = true;
     bool decision_OR = false;
-    // loop over filters
-    for (size_t i = 0; i < filterData->size(); i++) {
-        // get filter name
-        std::string name = names.triggerName(i);
-        // std::cout << "Filter: " << name << std::endl;
-        // check if the filter at hand is in the list of desired filters
-        bool filterfound = false;
-        bool regexfound = false;
-        for(auto filterName : filterNames) {
-            regexfound = regexfound or (std::regex_match(name, std::regex(filterName)));
-            filterfound = filterfound or (filterName == name);
-        }
-        if (not (filterfound or regexfound)) continue;
-        // if the filter is in the list, check if the event passes the desired filters
-        bool filter_decision = filterData->accept(i);
-        filters.push_back(name);
+    // loop over desired filters
+    for (size_t i = 0; i < filters.size(); i++) {
+        // get filter index
+        int& index = indices.at(i);
+        // check if the event passes the desired filter
+        bool filter_decision = filterData->accept(index);
+        if ((not OR_mode) and (not filter_decision)) return false;
         decisions.push_back(filter_decision);
-        // std::cout << "Filter decision: " << filter_decision << std::endl;
-        // determine final decisions
+        // update final decisions
         decision_AND = decision_AND and filter_decision;
         decision_OR = decision_OR or filter_decision;
     }
@@ -145,6 +160,8 @@ bool FlagFilter::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
     if (taggingMode) {
         std::unique_ptr< std::vector< bool > > decisions_ptr = std::make_unique< std::vector< bool > >(decisions);
         std::unique_ptr< std::vector< std::string > > filters_ptr = std::make_unique< std::vector< std::string > >(filters);
+        iEvent.put(std::move(decisions_ptr), "decisions");
+        iEvent.put(std::move(filters_ptr), "filters");
     }
     // if the event passes the desired filters, keep the event
     return true;
@@ -157,12 +174,15 @@ void FlagFilter::beginStream(edm::StreamID) {}
 void FlagFilter::endStream() {}
 
 // ------------ method called when starting to processes a run  ------------
-/*
+
 void
 FlagFilter::beginRun(edm::Run const&, edm::EventSetup const&)
 {
+   run_start = true;
+   filters.clear();
+   indices.clear();
 }
-*/
+
 
 // ------------ method called when ending the processing of a run  ------------
 /*
